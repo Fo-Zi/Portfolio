@@ -1,6 +1,14 @@
 % SCRIPT - ADC Quantization error analysis
 % v1.0
 
+% COMMENTS IN USAGE %
+% The representation of the spectrum of the discrete quantization error can
+% be improved by sampling more than the 2 periods that i choose for this
+% example. I chose 2 only to visualize better the quantized signal and its
+% associated quantizion error.
+
+
+
 % ----------Config ADC---------- % 
 Nbits = 12;
 Vref = 3.3;
@@ -30,12 +38,21 @@ codebook = 0:LSB/2:Vref;            % rounding down (floor)
 % ----------Quantization error sequence---------- %
 EqY = Y - qY;  % Discrete sequence: quantiz. error
 
-% ----------Circular Cross-correlation of input signal(y1) and Quantiz. err. sequence (qy1) ---------- %
+% ----------Circular Cross-correlation of input signal(Y) and Quantiz. err. sequence (EqY) ---------- %
 C_Y_EqY = ifft(fft(Y.*conj(fft(qY))));
 
+% ----------Single-Sided Amplitude Spectrum of EqY---------- %
+L = length(EqY);             % Length of signal
+Eq1f = fft(EqY);
+P2 = abs(Eq1f/L);
+P1 = P2(1:L/2+1);
+P1(2:end-1) = 2*P1(2:end-1);
+f = fs*(0:(L/2))/L;
+
+
 % ----------Plotting---------- %
-figure
-subplot(3,1,1)
+figure(1)
+subplot(2,1,1)
 plot(t, Y,'x')
 hold on;
 
@@ -47,7 +64,7 @@ legend('Original sampled signal','Quantized signal');
 xlim([0 t2])
 grid
 
-subplot(3,1,2)
+subplot(2,1,2)
 plot(t,EqY,'o')
 title('Quantization error amplitude')
 xlabel('Time (t)')
@@ -55,9 +72,17 @@ ylabel('EqY(t)')
 axis([0 t2 min(EqY) max(EqY)])
 grid
 
-subplot(3,1,3)
+figure(2)
+subplot(2,1,1)
 plot(t(2:end),C_Y_EqY(2:end),'o')
-title('Circular Cross-correlation of input signal(y1) and Quantiz. err. sequence (qy1) ')
+title('Circular Cross-correlation of input signal(Y) and Quantiz. err. sequence (qY) ')
 xlabel('Time (t)')
 ylabel('C_Y_EqY(t)')
+grid
+
+subplot(2,1,2)
+plot(f,P1) 
+title('Single-Sided Amplitude Spectrum of e[n]')
+xlabel('f (Hz)')
+ylabel('|P1(f)|')
 grid
