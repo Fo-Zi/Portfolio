@@ -3,11 +3,9 @@
 
 % COMMENTS IN USAGE %
 % The representation of the spectrum of the discrete quantization error can
-% be improved by sampling more than the 2 periods that i choose for this
+% be improved by sampling more than 2 periods i choose for this
 % example. I chose 2 only to visualize better the quantized signal and its
 % associated quantizion error.
-
-
 
 % ----------Config ADC---------- % 
 Nbits = 12;
