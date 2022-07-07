@@ -1,29 +1,48 @@
 % SCRIPT - IIR filtering analysis %
 
 fs = 1*10^6;
-%z = tf('z',ts);
-ALPHA = single(0.9999);
-%Hi = (1-ALPHA)/(1-ALPHA*(z^-1));
+ALPHA = single(0.25);
 
-b = 1- ALPHA;
+% 3rd order IIR filter -> 3 IIR single pole cascaded %
 a1 = [1 -ALPHA];
 a2 = [1 -ALPHA];
 a3 = [1 -ALPHA]; 
 a = conv(a3,conv(a1,a2));
+b = 1- ALPHA;
 
-c = ALPHA;
+% Complementary 3rd order IIR filter -> 3 IIR single pole cascaded %
 d1 = [1 -(1-ALPHA)];
 d2 = [1 -(1-ALPHA)];
 d3 = [1 -(1-ALPHA)]; 
 d = conv(a3,conv(a1,a2));
+c = ALPHA;
 
 n=1000;
 [h1,w1] = freqz(b,a,n,fs);
 [h2,w2] = freqz(c,d,n,fs);
 
-plot(w1/pi,20*log10(abs(h1)))
-ax = gca;
-ax.YLim = [-100 20];
-ax.XTick = 0:.5:2;
+figure(1)
+subplot(2,1,1)
+plot(w1,20*log10(abs(h1)))
 xlabel('Normalized Frequency (\times\pi rad/sample)')
 ylabel('Magnitude (dB)')
+grid
+
+subplot(2,1,2)
+plot(w1,angle(h1))
+xlabel('Normalized Frequency (\times\pi rad/sample)')
+ylabel('Magnitude (dB)')
+grid
+
+figure(2)
+subplot(2,1,1)
+plot(w2,20*log10(abs(h2)))
+xlabel('Normalized Frequency (\times\pi rad/sample)')
+ylabel('Magnitude (dB)')
+grid
+
+subplot(2,1,2)
+plot(w2,angle(h2))
+xlabel('Normalized Frequency (\times\pi rad/sample)')
+ylabel('Magnitude (dB)')
+grid
