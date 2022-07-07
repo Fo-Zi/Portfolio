@@ -3,7 +3,7 @@
 
 % ---------- Reference constants ---------- %
 fs = 1*10^6;
-ALPHA = single(0.1);
+ALPHA = single(0.2);
 
 % ---------- 1st order IIR filter ---------- %
 a = [1 -(1-ALPHA)];

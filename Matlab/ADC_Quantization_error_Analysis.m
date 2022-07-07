@@ -15,13 +15,14 @@ LSB = Vref/(2^Nbits);
 % ----------Signals to be sampled---------- %
 f1 = 50*10^3 ;  % Signal freq of 50kHz
 Vcc1 = 1.65;  
-A1 = 1;   % Sin amplitude
+A1 = 0.1;   % Sin amplitude
 y1 = @(t) Vcc1 + A1*sin(2*pi*f1*t) ;    % Sinusoidal signal example with Vcc value !=0
 
 % ----------Sampling interval---------- %
-fs = 2*10^6 ; % Sampling freq of 1MHz
+fs = 1.99*10^6 ; % Sampling freq of 1MHz
 t1 = 0 ;
-t2 = 2/f1 ;  % Sampling 2 periods of y1
+Np = 10 ;
+t2 = Np/f1 ;  % Sampling Np periods of y1
 Ts = 1/fs ;
 t = [t1:Ts:t2];
 
@@ -74,22 +75,22 @@ grid
 
 figure(2)
 subplot(3,1,1)
-plot(t(1:end),C_Y_EqY(1:end),'o')
-title('Circular Cross-correlation of input signal(Y) and Quantiz. err. sequence (EqY) ')
-xlabel('Time (t)')
-ylabel('C_Y_EqY (t)')
-grid
-
-subplot(3,1,2)
-plot(t(1:end),C_Y_EqY(1:end),'o')
+plot(t(1:end),R_EqY_EqY(1:end),'o')
 title('Auto-correlation of Quantiz. err. seq (EqY)')
 xlabel('Time (t)')
 ylabel('R_EqY_EqY (t)')
 grid
 
-subplot(3,1,3)
+subplot(3,1,2)
 plot(f,P1) 
 title('Single-Sided Amplitude Spectrum of e[n]')
 xlabel('f (Hz)')
-ylabel('|P1(f)|')
+ylabel('P1(f)')
+grid
+
+subplot(3,1,3)
+plot(f,20*log(P1)) 
+title('Single-Sided Amplitude Spectrum of e[n]')
+xlabel('f (Hz)')
+ylabel('P1(f)[dB]')
 grid
