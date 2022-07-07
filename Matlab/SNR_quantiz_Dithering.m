@@ -1,8 +1,9 @@
 % SCRIPT - Output quantization error of a digital processing process %
 
 % BRIEFING %
-% This script analyzes how Quantization Noise caused by sampling a   % 
-% periodic analog signal behaves when processed by a digital filter  %
+% -This script analyzes how Quantization Noise caused by sampling a   % 
+% periodic analog signal behaves when processed by a digital filter   %
+% and the possibility of comparing the results when we use Dithering  %
 
 % ----------Config ADC---------- % 
 Nbits = 12;
