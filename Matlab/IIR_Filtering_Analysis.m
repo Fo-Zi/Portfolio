@@ -1,29 +1,37 @@
 % SCRIPT - IIR filtering analysis %
 
 fs = 1*10^6;
-ALPHA = single(0.7);
+ALPHA = single(0.2);
 
 % 3rd order IIR filter -> 3 IIR single pole cascaded %
+%{
 a1 = [1 -ALPHA];
 a2 = [1 -ALPHA];
 a3 = [1 -ALPHA]; 
 a = conv(a3,conv(a1,a2));
 b = 1- ALPHA;
+%}
 
-% Complementary 3rd order IIR filter -> 3 IIR single pole cascaded %
-d1 = [1 -(1-ALPHA)];
-d2 = [1 -(1-ALPHA)];
-d3 = [1 -(1-ALPHA)]; 
-d = conv(a3,conv(a1,a2));
-c = ALPHA;
+% 1st order IIR filter %
+a = [1 -(1-ALPHA)];
+b = ALPHA;
 
-% Complementary 1st order IIR filter %
-e = [1 -(1-ALPHA)];
+% 2nd order IIR filter -> 2 cascaded single pole IIR %
+c1 = [1 -(1-ALPHA)];
+c2 = [1 -(1-ALPHA)];
+c = conv(a1,a2);
+d = ALPHA;
+
+% 3rd order IIR filter -> 3 cascaded single pole IIR %
+e1 = [1 -(1-ALPHA)];
+e2 = [1 -(1-ALPHA)];
+e3 = [1 -(1-ALPHA)]; 
+e = conv(a3,conv(a1,a2));
 f = ALPHA;
 
 n=1000;
 [h1,f1] = freqz(b,a,n,fs);
-[h2,f2] = freqz(c,d,n,fs);
+[h2,f2] = freqz(d,c,n,fs);
 [h3,f3] = freqz(f,e,n,fs);
 
 [c1 ind1] = min(abs(20*log10(abs(h1))+3));
@@ -35,19 +43,23 @@ subplot(2,1,1)
 plot(f1,20*log10(abs(h1)))
 hold on
 plot(f2,20*log10(abs(h2)))
-title('Frequency response 3rd order IIR filter')
+hold on
+plot(f2,20*log10(abs(h3)))
+title('Frequency response - IIR filters')
 xlabel('Frequency [Hz]')
 ylabel('Magnitude [dB]')
-legend('3rd order filter','3rd order complementary filter');
+legend('1st order filter','2nd order filter','3rd order filter');
 grid
 
 subplot(2,1,2)
 plot(f1,angle(h1))
 hold on
 plot(f2,angle(h2))
+hold on
+plot(f2,angle(h3))
 xlabel('Frequency [Hz]')
 ylabel('Phase [deg]')
-legend('3rd order filter','3rd order complementary filter');
+legend('1st order filter','2nd order filter','3rd order filter');
 grid
 
 %{
@@ -66,6 +78,7 @@ ylabel('Phase [deg]')
 grid
 %}
 
+%{
 figure(3)
 subplot(2,1,1)
 plot(f3,20*log10(abs(h3)))
@@ -79,3 +92,4 @@ plot(f3,angle(h3))
 xlabel('Frequency [Hz]')
 ylabel('Phase [deg]')
 grid
+%}
