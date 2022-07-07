@@ -27,10 +27,6 @@ t = [t1:Ts:t2];
 Y = y1(t);
 L = length(Y);             % Length of signal
 
-% ----------Signal + random noise (Dithering)---------- %
-Nd = 6;                         % N-bit dithering
-Y_dith = Y + rand(1,L)*Nd*LSB;   % N-LSB random noise
-
 % ----------Quantized signal---------- %
 partition = 0+LSB/2:LSB/2:Vref;     % Under this intervals, the signal is quantized
 codebook = 0:LSB/2:Vref;            % rounding down (floor)
@@ -39,7 +35,6 @@ codebook = 0:LSB/2:Vref;            % rounding down (floor)
 
 % ----------Quantization error sequence---------- %
 EqY = Y - qY;  % Discrete sequence: quantiz. error
-EqY_dith = Y_dith - qY_dith;  % Discrete sequence: quantiz. error with dithering
 
 % ----------Single-Sided Amplitude Spectrum of EqY---------- %
 Eq1f = fft(EqY);
@@ -48,35 +43,17 @@ P1 = P2(1:L/2+1);
 P1(2:end-1) = 2*P1(2:end-1);
 f1 = fs*(0:(L/2))/L;
 
-% ----------Single-Sided Amplitude Spectrum of EqYdith---------- %
-Eq1f_dith = fft(EqY_dith);
-P2_dith = abs(Eq1f_dith/L);
-P1_dith = P2_dith(1:L/2+1);
-P1_dith(2:end-1) = 2*P1_dith(2:end-1);
-
 % ----------Single-Sided Amplitude Spectrum of Y---------- %
 Yf = fft(Y);
 Py2 = abs(Yf/L);
 Py1 = Py2(1:L/2+1);
 Py1(2:end-1) = 2*Py1(2:end-1);
 
-% ----------Single-Sided Amplitude Spectrum of Y_dith---------- %
-Yf_dith = fft(Y_dith);
-Py2_dith = abs(Yf_dith/L);
-Py1_dith = Py2_dith(1:L/2+1);
-Py1_dith(2:end-1) = 2*Py1_dith(2:end-1);
-
 % ----------Single-Sided Amplitude Spectrum of qY---------- %
 Yqf = fft(qY);
 Pyq2 = abs(Yqf/L);
 Pyq1 = Pyq2(1:L/2+1);
 Pyq1(2:end-1) = 2*Pyq1(2:end-1);
-
-% ----------Single-Sided Amplitude Spectrum of qY_dith---------- %
-Yqf_dith = fft(qY_dith);
-Pyq2_dith = abs(Yqf_dith/L);
-Pyq1_dith = Pyq2_dith(1:L/2+1);
-Pyq1_dith(2:end-1) = 2*Pyq1_dith(2:end-1);
 
 % ---------- N-th order IIR filter -> N cascaded single pole IIR ---------- %
 ALPHA = 0.2;
@@ -120,43 +97,6 @@ grid
 SNR_dB = Py1_dB - P1_dB;
 subplot(4,1,4)
 plot(f1(2:end),2*(SNR_dB(2:end)))
-%ylim([-60 inf])
-title('SNR - Signal / Quantiz. Noise')
-xlabel('Frequency [Hz]')
-ylabel('Magnitude [dB]')
-grid
-
-% Analysis with Dithering %
-figure(2)
-P1_dB_dith = 20*log(h1.*P1_dith);
-subplot(4,1,1)
-plot(f1(2:end),P1_dB_dith(2:end))
-title('Freq. response of filtered Quantization Noise')
-xlabel('Frequency [Hz]')
-ylabel('Magnitude [dB]')
-grid
-
-Py1_dB_dith = 20*log(h1.*Py1_dith);
-subplot(4,1,2)
-plot(f1(2:end),Py1_dB_dith(2:end))
-%ylim([-100 inf])
-title('Freq. response of filtered signal')
-xlabel('Frequency [Hz]')
-ylabel('Magnitude [dB]')
-grid
-
-Pyq1_dB_dith = 20*log(h1.*Pyq1_dith);
-subplot(4,1,3)
-plot(f1(2:end),Pyq1_dB_dith(2:end))
-%ylim([-100 inf])
-title('Freq. response of filtered: signal + noise')
-xlabel('Frequency [Hz]')
-ylabel('Magnitude [dB]')
-grid
-
-SNR_dB_dith = Py1_dB_dith - P1_dB_dith;
-subplot(4,1,4)
-plot(f1(2:end),2*(SNR_dB_dith(2:end)))
 %ylim([-60 inf])
 title('SNR - Signal / Quantiz. Noise')
 xlabel('Frequency [Hz]')
