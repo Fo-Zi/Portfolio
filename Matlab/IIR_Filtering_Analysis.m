@@ -1,7 +1,7 @@
 % SCRIPT - IIR filtering analysis %
 
 fs = 1*10^6;
-ALPHA = single(0.9999);
+ALPHA = single(0.7);
 
 % 3rd order IIR filter -> 3 IIR single pole cascaded %
 a1 = [1 -ALPHA];
@@ -25,6 +25,10 @@ n=1000;
 [h1,f1] = freqz(b,a,n,fs);
 [h2,f2] = freqz(c,d,n,fs);
 [h3,f3] = freqz(f,e,n,fs);
+
+[c1 ind1] = min(abs(20*log10(abs(h1))+3));
+[c2 ind2] = min(abs(20*log10(abs(h2))+3)); 
+[c3 ind3] = min(abs(20*log10(abs(h3))+3));
 
 figure(1)
 subplot(2,1,1)
