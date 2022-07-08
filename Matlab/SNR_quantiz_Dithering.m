@@ -13,11 +13,11 @@ LSB = Vref/(2^Nbits);
 % ----------Signals to be sampled---------- %
 f1 = 50*10^3 ;  % Signal freq of 50kHz
 Vcc1 = 1.65;  
-A1 = 0.1;   % Amplitude
+A1 = 0.8;   % Amplitude
 y1 = @(t) Vcc1 + A1*sin(2*pi*f1*t) ;    % Sinusoidal signal example 
 
 % ----------Sampling interval---------- %
-fs = 1.99*10^6 ; % Sampling freq of 1MHz
+fs = 2*10^6 ; % Sampling freq of 1MHz
 t1 = 0 ;
 Np = 20 ;
 t2 = Np/f1 ;  % Sampling Np periods of y1
@@ -29,7 +29,7 @@ Y = y1(t);
 L = length(Y);             % Length of signal
 
 % ----------Signal + random noise (Dithering)---------- %
-Nd = 6;                             % N-bit dithering
+Nd = 5;                             % N-bit dithering
 Y_dith = Y + rand(1,L)*Nd*LSB;      % N-LSB random noise
 
 % ----------Quantized signal---------- %
@@ -77,10 +77,10 @@ Pyq1(2:end-1) = 2*Pyq1(2:end-1);
 Yqf_dith = fft(qY_dith);
 Pyq2_dith = abs(Yqf_dith/L);
 Pyq1_dith = Pyq2_dith(1:L/2+1);
-Pyq1_dith(2:end-1) = 2*Pyq1_dith(2:end-1);
+Pyq1_dith(1:end-1) = 2*Pyq1_dith(1:end-1);
 
 % ---------- N-th order IIR filter -> N cascaded single pole IIR ---------- %
-ALPHA = 0.2;
+ALPHA = 0.0001;
 N=3;
 a = [1];
 for i = 1:N
@@ -88,13 +88,13 @@ for i = 1:N
     a = conv(a,aux);
 end
 
-h1 = freqz(ALPHA,a,f1,fs);
+h1 = freqz(ALPHA^N,a,f1,fs);
 
 % ---------- Plotting ---------- %
 figure(1)
 P1_dB = 20*log(h1.*P1);
 subplot(4,1,1)
-plot(f1(2:end),P1_dB(2:end))
+plot(f1(1:end),P1_dB(1:end))
 title('Freq. response of filtered Quantization Noise')
 xlabel('Frequency [Hz]')
 ylabel('Magnitude [dB]')
@@ -102,7 +102,7 @@ grid
 
 Py1_dB = 20*log(h1.*Py1);
 subplot(4,1,2)
-plot(f1(2:end),Py1_dB(2:end))
+plot(f1(1:end),Py1_dB(1:end))
 %ylim([-100 inf])
 title('Freq. response of filtered signal')
 xlabel('Frequency [Hz]')
@@ -111,7 +111,7 @@ grid
 
 Pyq1_dB = 20*log(h1.*Pyq1);
 subplot(4,1,3)
-plot(f1(2:end),Pyq1_dB(2:end))
+plot(f1(1:end),Pyq1_dB(1:end))
 %ylim([-100 inf])
 title('Freq. response of filtered: signal + noise')
 xlabel('Frequency [Hz]')
@@ -120,7 +120,7 @@ grid
 
 SNR_dB = Py1_dB - P1_dB;
 subplot(4,1,4)
-plot(f1(2:end),2*(SNR_dB(2:end)))
+plot(f1(1:end),2*(SNR_dB(1:end)))
 %ylim([-60 inf])
 title('SNR - Signal / Quantiz. Noise')
 xlabel('Frequency [Hz]')
@@ -139,7 +139,7 @@ grid
 
 Py1_dB_dith = 20*log(h1.*Py1_dith);
 subplot(4,1,2)
-plot(f1(2:end),Py1_dB_dith(2:end))
+plot(f1(1:end),Py1_dB_dith(1:end))
 %ylim([-100 inf])
 title('Freq. response of filtered signal')
 xlabel('Frequency [Hz]')
@@ -157,7 +157,7 @@ grid
 
 SNR_dB_dith = Py1_dB_dith - P1_dB_dith;
 subplot(4,1,4)
-plot(f1(2:end),2*(SNR_dB_dith(2:end)))
+plot(f1(1:end),2*(SNR_dB_dith(1:end)))
 %ylim([-60 inf])
 title('SNR - Signal / Quantiz. Noise')
 xlabel('Frequency [Hz]')

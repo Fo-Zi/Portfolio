@@ -3,7 +3,7 @@
 
 % ---------- Reference constants ---------- %
 fs = 1*10^6;
-ALPHA = single(0.2);
+ALPHA = single(0.0001);
 
 % ---------- 1st order IIR filter ---------- %
 a = [1 -(1-ALPHA)];
@@ -20,7 +20,7 @@ c3 = [1 -(1-ALPHA)];
 c = conv(c3,conv(c1,c2));
 
 % ---------- N-th order IIR filter -> N cascaded single pole IIR ---------- %
-N=5;
+N=3;
 d = [1];
 for i = 1:N
     aux = [1 -(1-ALPHA)];
@@ -30,9 +30,9 @@ end
 % ---------- Freq. response of the filters ---------- %
 n=1000;
 [h1,f] = freqz(ALPHA,a,n,fs);
-[h2,f] = freqz(ALPHA,b,n,fs);
-[h3,f] = freqz(ALPHA,c,n,fs);
-[h4,f] = freqz(ALPHA,d,n,fs);
+[h2,f] = freqz(ALPHA^2,b,n,fs);
+[h3,f] = freqz(ALPHA^3,c,n,fs);
+[h4,f] = freqz(ALPHA^N,d,n,fs);
 
 % ---------- Cutoff frequencies ---------- %
 %{

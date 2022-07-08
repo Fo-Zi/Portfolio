@@ -16,7 +16,7 @@ A1 = 0.1;   % Amplitude
 y1 = @(t) Vcc1 + A1*sin(2*pi*f1*t) ;    % Sinusoidal signal example 
 
 % ----------Sampling interval---------- %
-fs = 1.99*10^6 ; % Sampling freq of 1MHz
+fs = 2*10^6 ; % Sampling freq of 1MHz
 t1 = 0 ;
 Np = 20 ;
 t2 = Np/f1 ;  % Sampling Np periods of y1
@@ -31,7 +31,6 @@ L = length(Y);             % Length of signal
 partition = 0+LSB/2:LSB/2:Vref;     % Under this intervals, the signal is quantized
 codebook = 0:LSB/2:Vref;            % rounding down (floor)
 [ind,qY] = quantiz(Y,partition,codebook);  % Obtention of quantized signal (qY)
-[ind2,qY_dith] = quantiz(Y_dith,partition,codebook);  % Obtention of quantized(signal+noise)
 
 % ----------Quantization error sequence---------- %
 EqY = Y - qY;  % Discrete sequence: quantiz. error
@@ -56,7 +55,7 @@ Pyq1 = Pyq2(1:L/2+1);
 Pyq1(2:end-1) = 2*Pyq1(2:end-1);
 
 % ---------- N-th order IIR filter -> N cascaded single pole IIR ---------- %
-ALPHA = 0.2;
+ALPHA = 0.0001;
 N=3;
 a = [1];
 for i = 1:N
@@ -64,7 +63,7 @@ for i = 1:N
     a = conv(a,aux);
 end
 
-h1 = freqz(ALPHA,a,f1,fs);
+h1 = freqz(ALPHA^N,a,f1,fs);
 
 % ---------- Plotting ---------- %
 figure(1)
