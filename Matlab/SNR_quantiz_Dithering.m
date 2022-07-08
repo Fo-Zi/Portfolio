@@ -84,18 +84,31 @@ ALPHA = 0.0001;
 N=3;
 a = [1];
 for i = 1:N
+    aux = [1 -ALPHA];
+    a = conv(a,aux);
+end
+
+% ---------- N-th order "complementary" IIR filter -> N cascaded single pole IIR ---------- %
+N=3;
+a = [1];
+for i = 1:N
     aux = [1 -(1-ALPHA)];
     a = conv(a,aux);
 end
 
 h1 = freqz(ALPHA^N,a,f1,fs);
+h2 = freqz((1-ALPHA)^N,a,f1,fs);
 
 % ---------- Plotting ---------- %
 figure(1)
 P1_dB = 20*log(h1.*P1);
+%P2_dB = 20*log(h2.*P1);
 subplot(4,1,1)
 plot(f1(1:end),P1_dB(1:end))
+%hold on
+%plot(f1(1:end),P2_dB(1:end))
 title('Freq. response of filtered Quantization Noise')
+%legend('N-th order filter','N-th order complementary filter');
 xlabel('Frequency [Hz]')
 ylabel('Magnitude [dB]')
 grid
