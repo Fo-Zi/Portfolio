@@ -1,12 +1,21 @@
 % SCRIPT - IIR filtering analysis %
 % v1.0
 
-% ---------- Reference constants ---------- %
-fs = 1*10^6;
-ALPHA = single(0.99);
+%BRIEFING%
+% This script analyzes the frequency response of "Exponential Moving Average"(EMA) IIR filters.  %
+% With that purpose, the approach is to work with its corresponding Z transform expressions, and %
+% to analyze the N-th order implementation using cascaded 1st order EMA's, as it's one of the    %
+% most common implementations in embedded systems, bc it presents an efficient implementation,   %
+% in terms of memory usage, execution performance and frequency response.                        %
 
+
+% ---------- Reference constants ---------- %
+fs = 1*10^6;            % Sampling frequency
+ALPHA = single(0.99);   % Filter parameter
+
+% The obtention of cascaded transforms is obtained by polynomial expressions and multiplications %
 % ---------- 1st order IIR filter ---------- %
-a = [1 -(1-ALPHA)];
+a = [1 -(1-ALPHA)];    
 
 % ---------- 2nd order IIR filter -> 2 cascaded single pole IIR ---------- %
 b1 = [1 -(1-ALPHA)];
@@ -20,17 +29,17 @@ c3 = [1 -(1-ALPHA)];
 c = conv(c3,conv(c1,c2));
 
 % ---------- N-th order IIR filter -> N cascaded single pole IIR ---------- %
-N=3;
+N1=3;
 d = [1];
-for i = 1:N
+for i = 1:N1
     aux = [1 -(1-ALPHA)];
     d = conv(d,aux);
 end
 
 % ---------- N-th order "complementary" IIR filter -> N cascaded single pole IIR ---------- %
-N=3;
+N2=3;
 e = [1];
-for i = 1:N
+for i = 1:N2
     aux2 = [1 -ALPHA];
     e = conv(e,aux2);
 end
@@ -44,6 +53,7 @@ n=1000;
 [h5,f] = freqz((1-ALPHA)^N,e,n,fs);
 
 % ---------- Cutoff frequencies ---------- %
+% If you able this section you can obtain the -3dB frequencies %
 %{
 [c1 ind1] = min(abs(20*log10(abs(h1))+3));
 [c2 ind2] = min(abs(20*log10(abs(h2))+3)); 
