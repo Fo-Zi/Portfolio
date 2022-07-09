@@ -16,7 +16,7 @@ A1 = 0.1;   % Amplitude
 y1 = @(t) Vcc1 + A1*sin(2*pi*f1*t) ;    % Sinusoidal signal example 
 
 % ----------Sampling interval---------- %
-fs = 2*10^6 ; % Sampling freq of 1MHz
+fs = 2*10^6 ; % Sampling freq of 2MHz
 t1 = 0 ;
 Np = 20 ;
 t2 = Np/f1 ;  % Sampling Np periods of y1
@@ -28,9 +28,9 @@ Y = y1(t);
 L = length(Y);             % Length of signal
 
 % ----------Quantized signal---------- %
-partition = 0+LSB/2:LSB/2:Vref;     % Under this intervals, the signal is quantized
-codebook = 0:LSB/2:Vref;            % rounding down (floor)
-[ind,qY] = quantiz(Y,partition,codebook);  % Obtention of quantized signal (qY)
+partition = 0+LSB/2:LSB/2:Vref;             % Under this intervals, the signal is quantized
+codebook = 0:LSB/2:Vref;                    % rounding down (floor)
+[ind,qY] = quantiz(Y,partition,codebook);   % Obtention of quantized signal (qY)
 
 % ----------Quantization error sequence---------- %
 EqY = Y - qY;  % Discrete sequence: quantiz. error
