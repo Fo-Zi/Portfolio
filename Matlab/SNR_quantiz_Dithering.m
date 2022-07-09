@@ -3,7 +3,7 @@
 % BRIEFING %
 % -This script analyzes how Quantization Noise caused by sampling a   % 
 % periodic analog signal behaves when processed by a digital filter   %
-% and the possibility of comparing the results when we use Dithering  %
+% and the improvement we can obtain on the SNR when we use Dithering. %
 
 % ----------Config ADC---------- % 
 Nbits = 12;
@@ -32,13 +32,13 @@ L = length(Y);             % Length of signal
 Nd = 5;                             % N-bit dithering
 Y_dith = Y + rand(1,L)*Nd*LSB;      % N-LSB random noise
 
-% ----------Quantized signal---------- %
-partition = 0+LSB/2:LSB/2:Vref;     % Under this intervals, the signal is quantized
-codebook = 0:LSB/2:Vref;            % rounding down (floor)
-[ind,qY] = quantiz(Y,partition,codebook);  % Obtention of quantized signal (qY)
-[ind2,qY_dith] = quantiz(Y_dith,partition,codebook);  % Obtention of quantized(signal+noise)
+% ----------Quantized signals---------- %
+partition = 0+LSB/2:LSB/2:Vref;             % Under this intervals, the signal is quantized
+codebook = 0:LSB/2:Vref;                    % rounding down (floor)
+[ind,qY] = quantiz(Y,partition,codebook);               % Obtention of quantized signal (qY)
+[ind2,qY_dith] = quantiz(Y_dith,partition,codebook);    % Obtention of quantized(signal+noise)
 
-% ----------Quantization error sequence---------- %
+% ----------Quantization error sequences---------- %
 EqY = Y - qY;  % Discrete sequence: quantiz. error
 EqY_dith = Y_dith - qY_dith;  % Discrete sequence: quantiz. error with dithering
 
