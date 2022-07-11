@@ -1,7 +1,7 @@
 % SCRIPT - Lock-in algorithm processing %
 
 % ----------Zbio---------- % 
-Zbio = 200;
+Zbio = 50;
 
 % ----------Config ADC de tensión---------- % 
 Nbits = 12;
@@ -22,7 +22,7 @@ f1 = 50*10^3 ;  % Signal freq of 50kHz
 Vcc1 = 1.65;  
 A1 = 0.5;   % Amplitude
 
-RUIDO = 1;
+RUIDO = 0;
 Nr= 8;  %Nro bits de ruido (LSB)
 if RUIDO
     y1 = @(t) Vcc1 + A1*sin(2*pi*f1*t) + rand(1,length(t))*(Nr*LSB);    % Sinusoidal signal example
@@ -70,7 +70,10 @@ P1_I(1:end-1) = 2*P1_I(1:end-1);
 f = fs*(0:(L/2))/L;
 
 % ----------Lock-in demodulation---------- %
-c = cos(2*pi*f1*t) ;  
+deg_Zbio = 0;
+sim_phase = deg_Zbio*pi/180;
+
+c = cos(2*pi*f1*t + sim_phase) ;  
 s = sin(2*pi*f1*t) ;
 
 esc = 1;    %cte escalamiento
@@ -109,8 +112,8 @@ P1_I_Y = P2_I_Y(1:L/2+1);
 P1_I_Y(1:end-1) = 2*P1_I_Y(1:end-1);
 
 % ---------- N-th order IIR filter -> N cascaded single pole IIR ---------- %
-%fs = 1*10^6;
-ALPHA = single(0.9999);
+
+ALPHA = single(0.99);
 N=3;
 a = [1];
 for i = 1:N
@@ -122,7 +125,7 @@ h1 = freqz((1-ALPHA)^N,a,f,fs);
 
 % ---------- Comparing discrete difference equation of IIR filter: float vs double ---------- %
 
-ALPHAd = 0.9999;
+ALPHAd = 0.99;
 CTE = 4096/3.3;
 %CTE = 1;
 
