@@ -1,7 +1,7 @@
 % SCRIPT - Lock-in algorithm processing %
 
 % ----------Zbio---------- % 
-Zbio = 50;
+Zbio = 200;
 
 % ----------Config ADC de tensión---------- % 
 Nbits = 12;
@@ -23,8 +23,9 @@ Vcc1 = 1.65;
 A1 = 0.5;   % Amplitude
 
 RUIDO = 1;
+Nr= 8;  %Nro bits de ruido (LSB)
 if RUIDO
-    y1 = @(t) Vcc1 + A1*sin(2*pi*f1*t) + rand(1,length(t))*(A1/100);    % Sinusoidal signal example
+    y1 = @(t) Vcc1 + A1*sin(2*pi*f1*t) + rand(1,length(t))*(Nr*LSB);    % Sinusoidal signal example
 else
     y1 = @(t) Vcc1 + A1*sin(2*pi*f1*t);
 end
@@ -121,7 +122,7 @@ h1 = freqz((1-ALPHA)^N,a,f,fs);
 
 % ---------- Comparing discrete difference equation of IIR filter: float vs double ---------- %
 
-ALPHAd = 0.999999999999;
+ALPHAd = 0.9999;
 CTE = 4096/3.3;
 %CTE = 1;
 
@@ -172,13 +173,17 @@ for i = 1:length(qUdif_X)
     acc4(3,i) = ac4_3;
 end
 
-X_Us = ac1_3/(CTE*2*esc);
-Y_Us = ac3_3/(CTE*2*esc);
-X_Is = ac2_3/(CTE*esc);
-Y_Is = ac4_3/(CTE*esc);
+X_Us = ac1_3/(CTE*2*esc*Ad);
+Y_Us = ac3_3/(CTE*2*esc*Ad);
+X_Is = ac2_3/(CTE*esc*1000);
+Y_Is = ac4_3/(CTE*esc*1000);
+
+
 
 MOD_zbio_lockin_s = (sqrt(X_Us^2+Y_Us^2)/sqrt(X_Is^2+Y_Is^2)) ;
 MOD_zbio_lockin_s2 = (X_Us/X_Is) ;
+
+PH_zbio_lockin_s = atand(Y_Us/X_Us) - atand(Y_Is/X_Is);
 
 %DOUBLE implementation:%
 
@@ -228,13 +233,15 @@ for i = 1:length(qUdif_X)
     acc4d(3,i) = ac4_3d;
 end
 
-X_Ud = ac1_3d/(CTE*2*esc);
-Y_Ud = ac3_3d/(CTE*2*esc);
-X_Id = ac2_3d/(CTE*esc);
-Y_Id = ac4_3d/(CTE*esc);
+X_Ud = ac1_3d/(CTE*2*esc*Ad);
+Y_Ud = ac3_3d/(CTE*2*esc*Ad);
+X_Id = ac2_3d/(CTE*esc*1000);
+Y_Id = ac4_3d/(CTE*esc*1000);
 
 MOD_zbio_lockin_d = (sqrt(X_Ud^2+Y_Ud^2)/sqrt(X_Id^2+Y_Id^2)) ;
 MOD_zbio_lockin_d2 = (X_Ud/X_Id) ;
+
+PH_zbio_lockin_d = atand(Y_Ud/X_Ud) - atand(Y_Id/X_Id);
 
 % -----------------------------Plotting------------------------------- %
 
