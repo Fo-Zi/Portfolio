@@ -1,13 +1,13 @@
 % SCRIPT - Lock-in algorithm processing %
 
 % ----------Configurable simulation parameters---------- % 
-ALPHA = single(0.99);
-ALPHAd = 0.99;
+ALPHA = single(0.9999);
+ALPHAd = 0.9999;
 
 CTE = 4096/3.3;
 %CTE = 1;
 
-RUIDO = 0;
+RUIDO = 0;  % Boolean that incorporates noise into the 
 Nr= 8;  %Nro bits de ruido (LSB)
 
 esc = 1;    %cte escalamiento
@@ -83,7 +83,7 @@ P1_I(1:end-1) = 2*P1_I(1:end-1);
 f = fs*(0:(L/2))/L;
 
 % ----------Lock-in demodulation---------- %
-c = cos(2*pi*f1*t + sim_phase) ;  
+c = -cos(2*pi*f1*t + sim_phase) ;  
 s = sin(2*pi*f1*t) ;
 
 if esc~=1
@@ -132,100 +132,6 @@ end
 
 h1 = freqz((1-ALPHA)^N,a,f,fs);
 
-% ---------- Comparing discrete difference equation of IIR filter: float vs double ---------- %
-
-%FLOAT implementation:%
-acc1 = single(zeros(3,length(qUdif_X))); acc2 = single(zeros(3,length(qUdif_X)));
-acc3 = single(zeros(3,length(qUdif_X))); acc4 = single(zeros(3,length(qUdif_X)));
-ac1_1 = single(0); ac2_1 = single(0); ac3_1 = single(0);
-ac1_2 = single(0); ac2_2 = single(0); ac3_2 = single(0);
-ac1_3 = single(0); ac2_3 = single(0); ac3_3 = single(0);
-ac4_1 = single(0); ac4_2 = single(0); ac4_3 = single(0);
-for i = 1:length(qUdif_X)
-    ac1_1 = qUdif_X(i)*(CTE)*(1-ALPHA)+ac1_1*ALPHA;
-    acc1(1,i) = ac1_1;
-    ac1_2 = ac1_1*(1-ALPHA)+ac1_2*ALPHA;
-    acc1(2,i) = ac1_2;
-    ac1_3 = ac1_2*(1-ALPHA)+ac1_3*ALPHA;
-    acc1(3,i) = ac1_3;
-    
-    ac2_1 = qI_X(i)*(CTE)*(1-ALPHA)+ac2_1*ALPHA;
-    acc2(1,i) = ac2_1;
-    ac2_2 = ac2_1*(1-ALPHA)+ac2_2*ALPHA;
-    acc2(2,i) = ac2_2;
-    ac2_3 = ac2_2*(1-ALPHA)+ac2_3*ALPHA;
-    acc2(3,i) = ac2_3;
-    
-    ac3_1 = (qUdif_Y(i))*(CTE)*(1-ALPHA)+ac3_1*ALPHA;
-    acc3(1,i) = ac3_1;
-    ac3_2 = ac3_1*(1-ALPHA)+ac3_2*ALPHA;
-    acc3(2,i) = ac1_2;
-    ac3_3 = ac3_2*(1-ALPHA)+ac3_3*ALPHA;
-    acc3(3,i) = ac3_3;
-    
-    ac4_1 = (qI_Y(i))*(CTE)*(1-ALPHA)+ac4_1*ALPHA;
-    acc4(1,i) = ac4_1;
-    ac4_2 = ac4_1*(1-ALPHA)+ac4_2*ALPHA;
-    acc4(2,i) = ac4_2;
-    ac4_3 = ac2_2*(1-ALPHA)+ac4_3*ALPHA;
-    acc4(3,i) = ac4_3;
-end
-
-X_Us = ac1_3/(CTE*2*esc*Ad);
-Y_Us = ac3_3/(CTE*2*esc*Ad);
-X_Is = ac2_3/(CTE*esc*1000);
-Y_Is = ac4_3/(CTE*esc*1000);
-
-MOD_zbio_lockin_s = (sqrt(X_Us^2+Y_Us^2)/sqrt(X_Is^2+Y_Is^2)) ;
-MOD_zbio_lockin_s2 = (X_Us/X_Is) ;
-
-PH_zbio_lockin_s = atand(Y_Us/X_Us) - atand(Y_Is/X_Is);
-
-%DOUBLE implementation:%
-acc1d = zeros(3,length(qUdif_X)); acc2d = zeros(3,length(qUdif_X));
-acc3d = zeros(3,length(qUdif_X)); acc4d = zeros(3,length(qUdif_X));
-ac1_1d = 0; ac2_1d = 0; ac3_1d = 0; ac4_1d = 0;
-ac1_2d = 0; ac2_2d = 0; ac3_2d = 0; ac4_2d = 0;
-ac1_3d = 0; ac2_3d = 0; ac3_3d = 0; ac4_3d = 0;
-for i = 1:length(qUdif_X)
-    ac1_1d = (qUdif_X(i)*(CTE))*(1-ALPHAd)+ac1_1d*ALPHAd;
-    acc1d(1,i) = ac1_1d;
-    ac1_2d = ac1_1d*(1-ALPHAd)+ac1_2d*ALPHAd;
-    acc1d(2,i) = ac1_2d;
-    ac1_3d = ac1_2d*(1-ALPHAd)+ac1_3d*ALPHAd;
-    acc1d(3,i) = ac1_3d;
-    
-    ac2_1d = (qI_X(i))*(CTE)*(1-ALPHAd)+ac2_1d*ALPHAd;
-    acc2d(1,i) = ac2_1d;
-    ac2_2d = ac2_1d*(1-ALPHAd)+ac2_2d*ALPHAd;
-    acc2d(2,i) = ac2_2d;
-    ac2_3d = ac2_2d*(1-ALPHAd)+ac2_3d*ALPHAd;
-    acc2d(3,i) = ac2_3d;
-    
-    ac3_1d = (qUdif_Y(i))*(CTE)*(1-ALPHAd)+ac3_1d*ALPHAd;
-    acc3d(1,i) = ac3_1d;
-    ac3_2d = ac3_1d*(1-ALPHAd)+ac3_2d*ALPHAd;
-    acc3d(2,i) = ac1_2d;
-    ac3_3d = ac3_2d*(1-ALPHAd)+ac3_3d*ALPHAd;
-    acc3d(3,i) = ac3_3d;
-    
-    ac4_1d = (qI_Y(i))*(CTE)*(1-ALPHAd)+ac4_1d*ALPHAd;
-    acc4d(1,i) = ac4_1d;
-    ac4_2d = ac4_1d*(1-ALPHAd)+ac4_2d*ALPHAd;
-    acc4d(2,i) = ac4_2d;
-    ac4_3d = ac2_2d*(1-ALPHAd)+ac4_3d*ALPHAd;
-    acc4d(3,i) = ac4_3d;
-end
-
-X_Ud = ac1_3d/(CTE*2*esc*Ad);
-Y_Ud = ac3_3d/(CTE*2*esc*Ad);
-X_Id = ac2_3d/(CTE*esc*1000);
-Y_Id = ac4_3d/(CTE*esc*1000);
-
-MOD_zbio_lockin_d = (sqrt(X_Ud^2+Y_Ud^2)/sqrt(X_Id^2+Y_Id^2)) ;
-MOD_zbio_lockin_d2 = (X_Ud/X_Id) ;
-
-PH_zbio_lockin_d = atand(Y_Ud/X_Ud) - atand(Y_Id/X_Id);
 
 % -----------------------------Plotting------------------------------- %
 
