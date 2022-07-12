@@ -1,5 +1,20 @@
 % SCRIPT - Lock-in algorithm processing %
 
+% ----------Configurable simulation parameters---------- % 
+ALPHA = single(0.99);
+ALPHAd = 0.99;
+
+CTE = 4096/3.3;
+%CTE = 1;
+
+RUIDO = 0;
+Nr= 8;  %Nro bits de ruido (LSB)
+
+esc = 1;    %cte escalamiento
+
+deg_Zbio = 0;
+sim_phase = deg_Zbio*pi/180;
+
 % ----------Zbio---------- % 
 Zbio = 50;
 
@@ -22,8 +37,6 @@ f1 = 50*10^3 ;  % Signal freq of 50kHz
 Vcc1 = 1.65;  
 A1 = 0.5;   % Amplitude
 
-RUIDO = 0;
-Nr= 8;  %Nro bits de ruido (LSB)
 if RUIDO
     y1 = @(t) Vcc1 + A1*sin(2*pi*f1*t) + rand(1,length(t))*(Nr*LSB);    % Sinusoidal signal example
 else
@@ -70,13 +83,9 @@ P1_I(1:end-1) = 2*P1_I(1:end-1);
 f = fs*(0:(L/2))/L;
 
 % ----------Lock-in demodulation---------- %
-deg_Zbio = 0;
-sim_phase = deg_Zbio*pi/180;
-
 c = cos(2*pi*f1*t + sim_phase) ;  
 s = sin(2*pi*f1*t) ;
 
-esc = 1;    %cte escalamiento
 if esc~=1
     qUdif_X = esc*qUdif.*s;
     qUdif_Y = esc*qUdif.*c;
@@ -90,6 +99,7 @@ else
     qI_X = qI.*s;
     qI_Y = qI.*c;
 end
+
 % ----------Single-Sided Amplitude Spectrum of Lock-in signals---------- %
 qUdif_X_f = fft(qUdif_X);
 P2_dif_X = abs(qUdif_X_f/L);
@@ -113,7 +123,6 @@ P1_I_Y(1:end-1) = 2*P1_I_Y(1:end-1);
 
 % ---------- N-th order IIR filter -> N cascaded single pole IIR ---------- %
 
-ALPHA = single(0.99);
 N=3;
 a = [1];
 for i = 1:N
@@ -125,27 +134,13 @@ h1 = freqz((1-ALPHA)^N,a,f,fs);
 
 % ---------- Comparing discrete difference equation of IIR filter: float vs double ---------- %
 
-ALPHAd = 0.99;
-CTE = 4096/3.3;
-%CTE = 1;
-
 %FLOAT implementation:%
-acc1 = single(zeros(3,length(qUdif_X)));
-acc2 = single(zeros(3,length(qUdif_X)));
-acc3 = single(zeros(3,length(qUdif_X)));
-acc4 = single(zeros(3,length(qUdif_X)));
-ac1_1 = single(0);
-ac2_1 = single(0);
-ac1_2 = single(0);
-ac2_2 = single(0);
-ac1_3 = single(0);
-ac2_3 = single(0);
-ac3_1 = single(0);
-ac4_1 = single(0);
-ac3_2 = single(0);
-ac4_2 = single(0);
-ac3_3 = single(0);
-ac4_3 = single(0);
+acc1 = single(zeros(3,length(qUdif_X))); acc2 = single(zeros(3,length(qUdif_X)));
+acc3 = single(zeros(3,length(qUdif_X))); acc4 = single(zeros(3,length(qUdif_X)));
+ac1_1 = single(0); ac2_1 = single(0); ac3_1 = single(0);
+ac1_2 = single(0); ac2_2 = single(0); ac3_2 = single(0);
+ac1_3 = single(0); ac2_3 = single(0); ac3_3 = single(0);
+ac4_1 = single(0); ac4_2 = single(0); ac4_3 = single(0);
 for i = 1:length(qUdif_X)
     ac1_1 = qUdif_X(i)*(CTE)*(1-ALPHA)+ac1_1*ALPHA;
     acc1(1,i) = ac1_1;
@@ -181,31 +176,17 @@ Y_Us = ac3_3/(CTE*2*esc*Ad);
 X_Is = ac2_3/(CTE*esc*1000);
 Y_Is = ac4_3/(CTE*esc*1000);
 
-
-
 MOD_zbio_lockin_s = (sqrt(X_Us^2+Y_Us^2)/sqrt(X_Is^2+Y_Is^2)) ;
 MOD_zbio_lockin_s2 = (X_Us/X_Is) ;
 
 PH_zbio_lockin_s = atand(Y_Us/X_Us) - atand(Y_Is/X_Is);
 
 %DOUBLE implementation:%
-
-acc1d = zeros(3,length(qUdif_X));
-acc2d = zeros(3,length(qUdif_X));
-acc3d = zeros(3,length(qUdif_X));
-acc4d = zeros(3,length(qUdif_X));
-ac1_1d = 0;
-ac2_1d = 0;
-ac1_2d = 0;
-ac2_2d = 0;
-ac1_3d = 0;
-ac2_3d = 0;
-ac3_1d = 0;
-ac4_1d = 0;
-ac3_2d = 0;
-ac4_2d = 0;
-ac3_3d = 0;
-ac4_3d = 0;
+acc1d = zeros(3,length(qUdif_X)); acc2d = zeros(3,length(qUdif_X));
+acc3d = zeros(3,length(qUdif_X)); acc4d = zeros(3,length(qUdif_X));
+ac1_1d = 0; ac2_1d = 0; ac3_1d = 0; ac4_1d = 0;
+ac1_2d = 0; ac2_2d = 0; ac3_2d = 0; ac4_2d = 0;
+ac1_3d = 0; ac2_3d = 0; ac3_3d = 0; ac4_3d = 0;
 for i = 1:length(qUdif_X)
     ac1_1d = (qUdif_X(i)*(CTE))*(1-ALPHAd)+ac1_1d*ALPHAd;
     acc1d(1,i) = ac1_1d;
