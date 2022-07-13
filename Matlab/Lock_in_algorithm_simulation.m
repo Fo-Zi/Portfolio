@@ -8,7 +8,7 @@ CTE = 4096/3.3;
 %CTE = 1;
 
 RUIDO = 1;
-Nr= 8;  %Nro bits de ruido (LSB)
+Niv_ruido = 0.5*10^-3; % 0,5mV de ruido -> Medición experimental
 
 esc = 1;    %cte escalamiento
 
@@ -16,7 +16,7 @@ deg_Zbio = 0;
 sim_phase = deg_Zbio*pi/180;
 
 % ----------Zbio---------- % 
-Zbio = 200;
+Zbio = 50;
 
 % ----------Config ADC de tensión---------- % 
 Nbits = 12;
@@ -38,7 +38,7 @@ Vcc1 = 1.65;
 A1 = 0.5;   % Amplitude
 
 if RUIDO
-    y1 = @(t) Vcc1 + A1*sin(2*pi*f1*t) + rand(1,length(t))*(Nr*LSB);    % Sinusoidal signal example
+    y1 = @(t) Vcc1 + A1*sin(2*pi*f1*t) + rand(1,length(t))*(Niv_ruido);    % Sinusoidal signal example
 else
     y1 = @(t) Vcc1 + A1*sin(2*pi*f1*t);
 end

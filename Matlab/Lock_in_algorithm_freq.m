@@ -1,14 +1,14 @@
 % SCRIPT - Lock-in algorithm processing %
 
 % ----------Configurable simulation parameters---------- % 
-ALPHA = single(0.9999);
-ALPHAd = 0.9999;
+ALPHA = single(0.99);
+ALPHAd = 0.99;
 
 CTE = 4096/3.3;
 %CTE = 1;
 
-RUIDO = 0;  % Boolean that incorporates noise into the 
-Nr= 8;  %Nro bits de ruido (LSB)
+RUIDO = 1;  % Boolean that incorporates noise into the source signal
+Noise_lvl = 0.5*10^-3; % 0,5mV 
 
 esc = 1;    %cte escalamiento
 
@@ -38,7 +38,7 @@ Vcc1 = 1.65;
 A1 = 0.5;   % Amplitude
 
 if RUIDO
-    y1 = @(t) Vcc1 + A1*sin(2*pi*f1*t) + rand(1,length(t))*(Nr*LSB);    % Sinusoidal signal example
+    y1 = @(t) Vcc1 + A1*sin(2*pi*f1*t) + rand(1,length(t))*(Noise_lvl);    % Sinusoidal signal example
 else
     y1 = @(t) Vcc1 + A1*sin(2*pi*f1*t);
 end
@@ -83,7 +83,7 @@ P1_I(1:end-1) = 2*P1_I(1:end-1);
 f = fs*(0:(L/2))/L;
 
 % ----------Lock-in demodulation---------- %
-c = -cos(2*pi*f1*t + sim_phase) ;  
+c = cos(2*pi*f1*t + sim_phase) ;  
 s = sin(2*pi*f1*t) ;
 
 if esc~=1
