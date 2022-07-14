@@ -11,9 +11,15 @@
 
 % -------------------- Reference constants -------------------- %
 fs = 1*10^6;            % Sampling frequency
-ALPHAd = 0.9999;        % Filter parameter
+ALPHAd = 0.997;        % Filter parameter
 ALPHA = single(ALPHAd);   
+n=1000000;
 
+% Stable filters:
+% 1st order - 0.9999 - 500Hz/-30dB
+% 2nd order - 0.9997 - 500Hz/-40dB
+% 2nd order - 0.9995 - 500Hz/-32dB
+% 2nd order - 0.9990 - 500Hz/-20dB
 
 % The obtention of cascaded transforms is obtained by polynomial expressions/products %
 % -------------------- 1st order IIR filter -------------------- %
@@ -41,7 +47,7 @@ c3_d = [1 -ALPHAd];
 c_d = conv(c3_d,conv(c1_d,c2_d));
 
 % ---------- N-th order IIR filter -> N cascaded single pole IIR ---------- %
-N1=4;
+N1=6;
 d = [1];
 for i = 1:N1
     aux = [1 -ALPHA];
@@ -55,7 +61,6 @@ for i = 1:N1
 end
 
 % ---------------- Freq. response of the filters ---------------- %
-n=100000;
 
 %---------- Float implementation: ---------- %
 [h1,f] = freqz(1-ALPHA,a,n,fs);
@@ -121,7 +126,7 @@ plot(f,h3_dB)
 hold on
 plot(f,hN_dB)
 
-xlim([0 5000])
+xlim([0 50000])
 xlabel('Frequency [Hz]')
 ylabel('Magnitude [dB]')
 legend('1st order filter','2nd order filter','3rd order filter','N-th order filter');
@@ -135,7 +140,7 @@ hold on
 plot(f,angle(h3))
 hold on
 plot(f,angle(hN))
-xlim([0 5000])
+xlim([0 50000])
 
 xlabel('Frequency [Hz]')
 ylabel('Phase [deg]')
@@ -151,7 +156,7 @@ hold on
 plot(f,h3_dB_d)
 hold on
 plot(f,hN_dB_d)
-xlim([0 5000])
+xlim([0 50000])
 
 xlabel('Frequency [Hz]')
 ylabel('Magnitude [dB]')

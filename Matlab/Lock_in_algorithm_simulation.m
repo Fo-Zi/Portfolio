@@ -1,8 +1,9 @@
 % SCRIPT - Lock-in algorithm processing %
 
 % ----------Configurable simulation parameters---------- % 
-ALPHA = single(0.99);
-ALPHAd = 0.99;
+ALPHAd = 0.987;
+ALPHA = single(ALPHAd);
+
 
 CTE = 4096/3.3;
 %CTE = 1;
@@ -16,7 +17,7 @@ deg_Zbio = 0;
 sim_phase = deg_Zbio*pi/180;
 
 % ----------Zbio---------- % 
-Zbio = 50;
+Zbio = 200;
 
 % ----------Config ADC de tensión---------- % 
 Nbits = 12;
