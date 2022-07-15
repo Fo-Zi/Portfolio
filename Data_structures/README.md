@@ -1,4 +1,4 @@
-## SUMMARY
+## Summary
 
 This project will contain C implementations of data structures, with unit testing integrated with CMake and Google Tests. 
 
