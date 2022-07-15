@@ -1,0 +1,2 @@
+/usr/bin/ar qc libLinkedList.a  CMakeFiles/LinkedList.dir/LinkedList.c.o
+/usr/bin/ranlib libLinkedList.a

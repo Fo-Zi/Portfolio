@@ -1,0 +1,28 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/lmint-vm/Desktop/Workspace/C/Unit_Testing/Data_structures/src/linked_list/LinkedList.c
+stdio.h
+-
+string.h
+-
+stdlib.h
+-
+stdbool.h
+-
+stdint.h
+-
+LinkedList.h
+/home/lmint-vm/Desktop/Workspace/C/Unit_Testing/Data_structures/src/linked_list/LinkedList.h
+
+/home/lmint-vm/Desktop/Workspace/C/Unit_Testing/Data_structures/src/linked_list/LinkedList.h
+stdbool.h
+-
+stdint.h
+-
+
