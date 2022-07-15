@@ -1,2 +1,2 @@
 This project will contain C implementations of data structures, with unit testing integrated with CMake and Google Tests. 
-By now there is only a linked list implementation, i will update more soon
+By now there is only a linked list implementation, i will update more soon, i hope this serves as a template for a 'full project' using GTest and CMake.
