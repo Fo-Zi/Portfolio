@@ -1,5 +1,6 @@
-# Summary
-### In this folder there are a couples of scripts that i designed, most of them used for engineering analysis and simulation: 
+# Data structures in C
+## Summary
+In this folder there are a couples of scripts that i designed, most of them used for engineering analysis and simulation: 
 
 -**ADC Quantization Error Analysis**: Serves more as a pedagogical view of how the Quantization Error Sequence behaves as a result of sampling a periodic signal, and gives the possibility to change some parameters to see how it's affected.
 
