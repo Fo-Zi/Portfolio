@@ -2,7 +2,7 @@ import requests
 import json
 import tkinter as tk
 
-response = requests.get("https://api.exchangerate.host/latest")
+response = requests.get("https://api.exchangerate.host/2020-04-04")
 res_json = response.json()
 #res_dict = json.loads(res_json)
 

@@ -6,6 +6,11 @@ class Controller:
     def setup(self):
         pass
 
-    def getData(self):
-        return self._model.parseData()
-        
+    def getData(self,type):
+        if type=='latest':
+            return self._model.parseLatest()
+        elif type=='timeSeries':
+            return self._model.parseTimeseries()
+
+    def getClockObj(self):
+        return self._model.clock
