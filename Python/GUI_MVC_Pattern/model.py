@@ -14,7 +14,7 @@ class Model:
         jsonData = request.json()
         return jsonData['rates']
 
-    def parseTimeSeries(self):
+    def parseTimeSeries(self,dates):
         request = requests.get(self._URL['exchangeR']+'latest')
         jsonData = request.json()
         return jsonData['rates']

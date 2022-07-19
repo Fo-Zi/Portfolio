@@ -14,3 +14,7 @@ class Controller:
 
     def getClockObj(self):
         return self._model.clock
+    
+    def setDate(self,dates):
+        pass
+        #self._model.parseTimeSeries(dates)
